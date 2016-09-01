@@ -36,10 +36,7 @@ module.exports = {
 
     plugins: clearArray([
         isDemo(undefined, new CleanWebpackPlugin([distFolderPath])),
-        isProduction(new webpack.optimize.UglifyJsPlugin({
-            compress: {warnings: false},
-            output: {comments: false}
-        }))
+        isProduction(new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}, output: {comments: false}}))
     ])
 
 };
