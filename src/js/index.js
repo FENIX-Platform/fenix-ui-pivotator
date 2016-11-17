@@ -343,7 +343,11 @@ define(["./functions"], function (myFunction) {
     }
 
     function toFX(FX, userOptions) {
-        var result = {data: [], metadata: {dsd: {columns: []}}}
+        var result = {data: [], metadata: {dsd: {columns: []}}};
+
+        var lang = userOptions.lang || "EN";
+        lang = lang.toUpperCase();
+
         var pivotdata = toPivotData(FX, userOptions);
         for (var ii in pivotdata.rows) {
             var i = pivotdata.rows[ii];
@@ -352,19 +356,7 @@ define(["./functions"], function (myFunction) {
             //for internaldata
             for (var jj in pivotdata.columns) {
                 var j = pivotdata.columns[jj];
-                /*if (pivotdata.data[i][j]) {
-                 temp.push(myfunc.getAgg(userOptions.Aggregator)(pivotdata.data[i][j],
-                 myfunc.getFormater(userOptions.Formater),userOptions.nbDecimal) )
-                 //temp2.push(myfunc.getAgg(userOptions.aggregator)(pivotdata.data[i][j], myfunc.getFormater(userOptions.formater), userOptions.nbDecimal));
-                 //console.log(pivotdata.data[i][j])
-                 }
-                 else {
-                 temp.push(null);
-                 //temp2.push(null)
-                 }*/
-
-
-                for (var vtemp in userOptions.values) {
+                 for (var vtemp in userOptions.values) {
                     var vindex = userOptions.values[vtemp]
                     if (pivotdata.data[vindex][i][j]) {
                         var myAgg = null;
@@ -387,26 +379,33 @@ define(["./functions"], function (myFunction) {
 
             }
             result.data.push(temp)
-            //MYFINALRESULT.data.push(temp2)
         }
 
         var traduc = {}
         for (var i in FX.metadata.dsd.columns) {
-            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title["EN"]
+
+            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title[lang]
         }
 
         for (var i in userOptions.ROWS) {
-            result.metadata.dsd.columns.push({id: userOptions.ROWS[i], title: {EN: traduc[userOptions.ROWS[i]]}})
+            var title = {};
+            title[lang] = traduc[userOptions.ROWS[i]];
+            result.metadata.dsd.columns.push({id: userOptions.ROWS[i], title: title})
         }
         for (var i in userOptions.COLS) {
-            result.metadata.dsd.columns.push({id: userOptions.COLS[i], title: {EN: traduc[userOptions.COLS[i]]}})
+            var title = {};
+            title[lang] = traduc[userOptions.COLS[i]];
+            result.metadata.dsd.columns.push({id: userOptions.COLS[i], title: title})
         }
 
 
         for (var i in pivotdata.columns) {
+            var title = {};
+            title[lang] = i.replace(/\|\*/g, "\n");
+
             result.metadata.dsd.columns.push({
                 id: i.replace(/\|\*/g, "_"),
-                title: {EN: i.replace(/\|\*/g, "\n")},
+                title: title,
                 subject: "value"
             })
         }
@@ -416,6 +415,7 @@ define(["./functions"], function (myFunction) {
 
 
     function toFXJson(FX, userOptions) {
+
         //console.log("toFXJson",FX,userOptions);
         MYFINALRESULT = {
             data: [],
@@ -432,6 +432,8 @@ define(["./functions"], function (myFunction) {
             colsname: []
         };//to internal test and dataset function
 
+        var lang = userOptions.lang || "EN";
+        lang = lang.toUpperCase();
 
         var pivotdata = toPivotData(FX, userOptions);
         for (var ii in pivotdata.rows) {
@@ -478,17 +480,23 @@ define(["./functions"], function (myFunction) {
 
         var traduc = {}
         for (var i in FX.metadata.dsd.columns) {
-            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title["EN"]
+            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title[lang]
         }
 
         for (var i in userOptions.rows) {
-            MYFINALRESULT.rowname.push({id: userOptions.rows[i], title: {EN: traduc[userOptions.rows[i]]}})
+            var title = {};
+            title[lang] = traduc[userOptions.rows[i]];
+            MYFINALRESULT.rowname.push({id: userOptions.rows[i], title: title})
         }
         if (userOptions.rows.length == 0) {
-            MYFINALRESULT.rowname.push({id: "row", title: {EN: "ROW"}})
+            var title = {};
+            title[lang] = "ROW"
+            MYFINALRESULT.rowname.push({id: "row", title: title})
         }
         for (var i in userOptions.columns) {
-            MYFINALRESULT.colsname.push({id: userOptions.columns[i], title: {EN: traduc[userOptions.columns[i]]}})
+            var title = {};
+            title[lang] = traduc[userOptions.columns[i]]
+            MYFINALRESULT.colsname.push({id: userOptions.columns[i], title: title})
         }
 
         //console.log("userOptions",userOptions)
@@ -499,10 +507,12 @@ define(["./functions"], function (myFunction) {
 
 
         for (var ii in pivotdata.columns) {
-            var i = pivotdata.columns[ii];
-            MYFINALRESULT.cols.push({id: i.replace(/\|\*/g, "_"), title: {EN: i.replace(/\|\*/g, "\n")}});
-            MYFINALRESULT.cols2.push(i.split("|*"))
+            var i = pivotdata.columns[ii],
+                title = {};
 
+            title[lang] = i.replace(/\|\*/g, "\n")
+            MYFINALRESULT.cols.push({id: i.replace(/\|\*/g, "_"), title: title});
+            MYFINALRESULT.cols2.push(i.split("|*"));
 
             MYFINALRESULT.cols2label.push(i.split("|*"))
 
@@ -511,7 +521,6 @@ define(["./functions"], function (myFunction) {
         return MYFINALRESULT;
 
     }
-
 
     return function () {
         return {
