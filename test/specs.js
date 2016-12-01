@@ -13,11 +13,7 @@ describe("Pivotator", function () {
     });
 
     it("should be i18n", function () {
-
         var pivoted = pivotator.pivot(model, config);
-
-
-
         expect(pivoted).to.be.not.null;
     });
 

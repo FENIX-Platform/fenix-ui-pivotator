@@ -356,7 +356,7 @@ define(["./functions"], function (myFunction) {
             //for internaldata
             for (var jj in pivotdata.columns) {
                 var j = pivotdata.columns[jj];
-                 for (var vtemp in userOptions.values) {
+                for (var vtemp in userOptions.values) {
                     var vindex = userOptions.values[vtemp]
                     if (pivotdata.data[vindex][i][j]) {
                         var myAgg = null;
@@ -478,9 +478,11 @@ define(["./functions"], function (myFunction) {
             MYFINALRESULT.data.push(temp2)
         }
 
-        var traduc = {}
+        var traduc = {};
+//TODO pass the whole title instead of the single label!!!!!
         for (var i in FX.metadata.dsd.columns) {
-            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title[lang]
+            var firstLang = Object.keys(FX.metadata.dsd.columns[i].title || {})[0];
+            traduc[FX.metadata.dsd.columns[i].id] = FX.metadata.dsd.columns[i].title[lang] || FX.metadata.dsd.columns[i].title[firstLang]
         }
 
         for (var i in userOptions.rows) {
